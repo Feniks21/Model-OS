@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Модель ОС</title>
+
+    <link href="libs/tabulator.css" rel="stylesheet">
+    <link href="libs/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <script src="libs/bootstrap.bundle.min.js"></script>
+    <script src="libs/tabulator.js"></script>
+    <script src="libs/color_scheme.js"></script>
+    <script src="utils.js" defer></script>
+    <script src="updateParams.js" defer></script>
+    <script src="os.js" defer></script>
+    <script src="index.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center vh-100" id="launch_group">
+            <div class="col col-md-5">
+                <button class="btn py-2 m-2 position-absolute top-0 end-0" data-bs-toggle="modal"
+                    data-bs-target="#helpModal">
+                    <span class="icon align-text-top me-1">info</span>Справка
+                </button>
+                <div class="modal" id="helpModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Справка по модели операционной системы</h5>
+                                <button class="btn-close" data-bs-dismiss="modal" type="button"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5>Автор</h5>
+                                <p>Владимиров Роман, ИВТ-11-20</p>
+                                <hr>
+                                <h5>Алгоритм работы планировщика</h5>
+                                <p>Абсолютный приоритет
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" data-bs-dismiss="modal" type="button">Понятно</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn w-100 mb-2" id="launch">
+                    <span class="icon align-text-top me-1">play_arrow</span>Запустить ОС
+                </button>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button py-2" data-bs-target="#sysParams" data-bs-toggle="collapse"
+                                aria-controls="sysParams">
+                                Параметры системы
+                            </button>
+                        </h2>
+                        <div class="accordion-collapse collapse show" id="sysParams">
+                            <div class="accordion-body">
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 9rem">Скорость</span>
+                                    <input class="form-control" id="speed-launch" type="text">
+                                </div>
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 9rem">Память</span>
+                                    <input class="form-control" id="mem" type="text">
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text" style="width: 9rem">Затраты ОС</span>
+                                    <input class="form-control" id="T_OS" type="text">
+                                </div>
+                                <button class="btn w-100" id="applySysParams">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="main" style="display:none !important">
+        <div class="row mt-3">
+            <div class="col-lg-3 col-md-12">
+                <div class="d-flex gap-2">
+                    <button class="btn text-start w-100 mb-2" id="shutdown">
+                        <div class="d-flex align-items-center flex-column">
+                            <span class="icon align-text-top me-1">mode_off_on</span>
+                            <span>Завершить ОС</span>
+                        </div>
+                    </button>
+                    <button class="btn w-100 mb-2 text-start" id="load">
+                        <div class="d-flex align-items-center flex-column">
+                            <span class="icon align-text-top me-1">upload</span>
+                            <span>Загруз. задание</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="btn mb-2 w-100">
+                    <div class="form-check form-switch p-0 text-start">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex">
+                                <span class="icon me-2">autorenew</span>
+                                <label class="form-check-label" for="task-autoload">Поступление заданий</label>
+                            </div>
+                            <input class="form-check-input ms-3 align-self-center" id="task-autoload" type="checkbox"
+                                role="switch">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-1 w-100">
+                    <span class="input-group-text" style="width: 9rem">Такты</span>
+                    <input class="form-control" id="tactCnt" type="text" readonly>
+                </div>
+                <div class="input-group mb-1 w-100">
+                    <span class="input-group-text" style="width: 9rem">Память</span>
+                    <input class="form-control" id="totalMem" type="text" readonly>
+                </div>
+                <div class="input-group mb-1 w-100">
+                    <span class="input-group-text" style="width: 9rem">Коэф. произв-сти</span>
+                    <input class="form-control" id="perfCoeff" type="text" readonly>
+                </div>
+                <div class="input-group mb-1 w-100">
+                    <span class="input-group-text" style="width: 9rem">Потери тактов</span>
+                    <input class="form-control" id="losses" type="text" readonly>
+                </div>
+                <div class="accordion mt-2" id="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button py-2" data-bs-target="#cmdParams" data-bs-toggle="collapse"
+                                aria-controls="cmdParams">
+                                Параметры команд
+                            </button>
+                        </h2>
+                        <div class="accordion-collapse collapse show" id="cmdParams" data-bs-parent="#accordion">
+                            <div class="accordion-body">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <th>Команда</th>
+                                        <th>Память</th>
+                                        <th>Такты</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>В/В</td>
+                                            <td><input class="form-control" type="text" id="ioMem"></td>
+                                            <td><input class="form-control" type="text" id="ioTact"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Вычисл.</td>
+                                            <td><input class="form-control" type="text" id="exeMem"></td>
+                                            <td><input class="form-control" type="text" id="exeTact"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button class="btn w-100 mt-2" id="applyCmdParams">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2" data-bs-target="#taskParams"
+                                data-bs-toggle="collapse" aria-controls="taskParams">
+                                Параметры задач
+                            </button>
+                        </h2>
+                        <div class="accordion-collapse collapse" id="taskParams" data-bs-parent="#accordion">
+                            <div class="accordion-body">
+                                <!-- <div class="input-group mb-1">
+                                    <span class="input-group-text">Приоритет</span>
+                                    <input class="form-control text-end" id="prior" type="text">
+                                </div> -->
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 8.5rem">Число команд</span>
+                                    <input class="form-control" id="cmdNum" type="text">
+                                </div>
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 8.5rem">Количество ВВ</span>
+                                    <input class="form-control" id="D_InOut" type="text">
+                                </div>
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 8.5rem">Тактов в фрейме</span>
+                                    <input class="form-control" id="quant" type="text">
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text" style="width: 8.5rem">Скорость</span>
+                                    <input class="form-control" id="speed" type="text">
+                                </div>
+                                <button class="btn w-100" id="applyTaskParams">Применить</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2" data-bs-target="#sysParamsReadOnly"
+                                data-bs-toggle="collapse" aria-controls="sysParamsReadOnly">
+                                Параметры системы
+                            </button>
+                        </h2>
+                        <div class="accordion-collapse collapse" id="sysParamsReadOnly" data-bs-parent="#accordion">
+                            <div class="accordion-body">
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 7rem">Память</span>
+                                    <input class="form-control" id="mem-ro" type="text" readonly>
+                                </div>
+                                <div class="input-group mb-1">
+                                    <span class="input-group-text" style="width: 7rem">Затраты ОС</span>
+                                    <input class="form-control" id="T_OS-ro" type="text" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-12 mt-1">
+                <div id="main-table"></div>
+            </div>
+            <div class="toast-container top-0 end-0 pt-2">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Нехватка памяти!</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
